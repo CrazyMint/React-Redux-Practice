@@ -1,38 +1,36 @@
 import React from "react";
-import { connect } from "react-redux";
-import { incrementByOne } from "../redux/redux";
-import { myConnect } from "./hoc/myConnect";
+import { useDispatch, useSelector } from "react-redux";
 
-class Counter extends React.Component {
-	handleClick = () => {
-		this.props.increment();
+import { decrement, getInitCounter, increment } from "../slices/counterSlice";
+
+import { useEffect } from "react";
+
+export default function Counter() {
+	const counter = useSelector((state) => state.counter.counter);
+
+	const isLoading = useSelector((state) => state.counter.isLoading);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		// console.log(getInitCounter());
+		dispatch(getInitCounter());
+	}, []);
+
+	const handleClickAdd = () => {
+		console.log("clicked add");
+		dispatch(increment());
 	};
 
-	render() {
-		const { counter } = this.props;
-		console.log("counter:", counter);
-		return (
-			<>
-				<p>{counter}</p>
-				<button onClick={this.handleClick}>add one</button>
-			</>
-		);
-	}
+	const handleClickDecrease = () => {
+		console.log("clicked decrease");
+		dispatch(decrement());
+	};
+
+	return (
+		<>
+			{isLoading ? <p>...</p> : <p>{counter}</p>}
+			<button onClick={handleClickAdd}>add one</button>
+			<button onClick={handleClickDecrease}>decrease one</button>
+		</>
+	);
 }
-
-const mapStateToProps = (state) => {
-	const { counter } = state;
-	return {
-		counter,
-	};
-};
-
-const mapDispatchToProps = (dispatch) => {
-	console.log(incrementByOne);
-	return {
-		increment: () => dispatch(incrementByOne),
-	};
-};
-
-export default myConnect(mapStateToProps, mapDispatchToProps)(Counter);
-// export default connect(mapStateToProps, mapDispatchToProps)(Counter);
